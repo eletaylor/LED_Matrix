@@ -34,25 +34,30 @@ def createClearandErase():
 
 
 def clear(btn):
-    resetColor()
-    for i in range(rows):
-        for j in range(columns):
-            btns[i][j]['bg'] = "gray"
+    if messagebox.askyesno("Confirm Clear", "Are you sure you want to clear?"):
+        reset()
+        for i in range(rows):
+            for j in range(columns):
+                btns[i][j]['bg'] = "gray"
 
 
-def resetColor():
+def reset():
     global userColor
+    global erase
     userColor = blankColor
+    erase = False
 
 
 def eraser(btn):
     global erase
     erase = True
+    messagebox.showinfo("Erase Activated", "Erase activated.")
 
 
 def color(btn):
     if userColor == blankColor and erase is False:
-        print("No color selected")
+        messagebox.showinfo("No Color Selected", "No color selected. Please choose a color on the right-hand side "
+                            + "of the screen.")
     elif erase:
         btn['bg'] = blankColor
     else:
@@ -64,12 +69,16 @@ def changeColor(btn):
     userColor = btn['bg']
 
     global erase
-    erase = False
+    if erase:
+        erase = False
+        messagebox.showinfo("Color Changed", "Erase deactivated. The active color is " + userColor)
+    else:
+        messagebox.showinfo("Color Changed", "The active color is " + userColor)
 
 
 def on_closing():
-    if messagebox.askokcancel("Quit", "Do you want to quit?"):
-        resetColor()
+    if messagebox.askokcancel("Quit", "Are you sure you want to quit?"):
+        reset()
         tk.destroy()
 
 
