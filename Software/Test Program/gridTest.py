@@ -7,7 +7,7 @@ def createGrid():
         for j in range(columns):
             btns[i][j] = Button(tk, bg="gray")
             btns[i][j]['command'] = lambda btn=btns[i][j]: color(btn)
-            btns[i][j].grid(row=i, column=j)
+            btns[i][j].grid(row=i+1, column=j)
 
 
 def createColorButtons():
@@ -18,19 +18,31 @@ def createColorButtons():
             colorButtons[i] = Button(tk, text=colors[i], fg='white', bg=colors[i].lower())
 
         colorButtons[i]['command'] = lambda btn=colorButtons[i]: changeColor(btn)
-        colorButtons[i].grid(row=i + 5, column=20)
+        colorButtons[i].grid(row=i+7, column=20)
 
 
 def createClearandErase():
     global clearButton
     clearButton = Button(tk, text="Clear", fg="white", bg="gray")
-    clearButton.grid(row=13, column=20)
+    clearButton.grid(row=15, column=20)
     clearButton['command'] = lambda btn=clearButton: clear(btn)
 
     global eraseButton
     eraseButton = Button(tk, text="Erase", fg="white", bg="gray")
-    eraseButton.grid(row=14, column=20)
+    eraseButton.grid(row=16, column=20)
     eraseButton['command'] = lambda btn=eraseButton: eraser(btn)
+
+
+def createMenuTab():
+    global menuStrip
+    global file
+
+    menuStrip = Menu(tk)
+    file = Menu(menuStrip, tearoff=0)
+
+    menuStrip.add_cascade(label="File", menu=file)
+    file.add_command(label="Open Design", command=None)
+    file.add_command(label="Save Design", command=None)
 
 
 def clear(btn):
@@ -89,17 +101,21 @@ colors = ["White", "Red", "Green", "Blue", "Black", "Cyan", "Yellow"]
 colorButtons = [None for i in range(len(colors))]
 clearButton = None
 eraseButton = None
+menuStrip = None
+file = None
 blankColor = "gray"
 userColor = blankColor
 erase = False
 
 tk = Tk()
 tk.title("Pixel Board")
-tk.attributes('-fullscreen', True)
 
 createGrid()
 createColorButtons()
 createClearandErase()
+createMenuTab()
 
+tk.config(menu=menuStrip)
+tk.attributes('-fullscreen', True)
 tk.protocol("WM_DELETE_WINDOW", on_closing)
 tk.mainloop()
