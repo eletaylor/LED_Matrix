@@ -24,8 +24,8 @@ def createGrid():
         for j in range(columns):
             btns[i][j] = Button(tk, bg="gray")
             btns[i][j]['command'] = lambda btn=btns[i][j]: color(btn)
-            btns[i][j].grid(row=i+1, column=j)
-            Grid.rowconfigure(tk, index = i+1, weight = 1)
+            btns[i][j].grid(row=i + 1, column=j)
+            Grid.rowconfigure(tk, index=i + 1, weight=1)
 
 
 def createColorButtons():
@@ -36,7 +36,7 @@ def createColorButtons():
             colorButtons[i] = Button(tk, text=colors[i], fg='white', bg=colors[i].lower())
 
         colorButtons[i]['command'] = lambda btn=colorButtons[i]: changeColor(btn)
-        colorButtons[i].grid(row=i+7, column=35)
+        colorButtons[i].grid(row=i + 7, column=35)
 
 
 def createClearAndErase():
@@ -61,23 +61,23 @@ def createMenuTab():
     menuStrip.add_cascade(label="File", menu=file)
     file.add_command(label="Open Design", command=lambda: open_file())
     file.add_command(label="Save Design", command=lambda: save_file())
-    menuStrip.add_command(label="Exit", command = lambda: on_closing())
+    menuStrip.add_command(label="Exit", command=lambda: on_closing())
 
 
 def createFolders():
-    if not(os.path.exists(imagePath)):
-        os.makedirs(imagePath)
-    if not(os.path.exists(textPath)):
-        os.makedirs(textPath)
+    if not (os.path.exists(path)):
+        os.makedirs(path)
+
 
 def clear(btn):
     global boardClear
+    global blankColor
     if boardClear is False:
         if messagebox.askyesno("Confirm Clear", "Are you sure you want to clear?"):
             reset()
             for i in range(rows):
                 for j in range(columns):
-                    btns[i][j]['bg'] = "gray"
+                    btns[i][j]['bg'] = blankColor
     else:
         messagebox.showinfo("Grid Empty", "Grid empty. Nothing to clear.")
 
@@ -131,42 +131,55 @@ def on_closing():
         reset()
         tk.destroy()
 
+
 def open_file():
-    openFile = filedialog.askopenfile(initialdir = imagePath)
+    counter = 0
+    openFile = filedialog.askopenfile(initialdir=path, title="Open Design")
+    colorArray = openFile.readlines()
+    colorArray = [x.strip() for x in colorArray]
+    buttonColors = []
+    for i in range(rows):
+        for j in range(columns):
+            btns[i][j]['bg'] = colorArray[counter]
+            buttonColors.append(btns[i][j]['bg'])
+            counter += 1
+    messagebox.showinfo("Load Successful", buttonColors)
+
 
 def save_file():
-    saveFile = filedialog.asksaveasfile(defaultextension=".png", initialdir = imagePath)
-        
-        
-        
+    saveFile = filedialog.asksaveasfile(defaultextension=".txt", initialdir=path, title="Save Design")
+    for i in range(rows):
+        for j in range(columns):
+            saveFile.write(btns[i][j]['bg'] + "\n")
+
+
 def getIndex(i, j):
     if j <= 7:
         if i % 2 == 0:
-            index = 8*i + j
+            index = 8 * i + j
         else:
-            index = 8*i + (8-(j+1))
+            index = 8 * i + (8 - (j + 1))
     else:
         if i % 2 == 0:
-            index = 8*(15+i) + j
+            index = 8 * (15 + i) + j
         else:
-            index = 8*(16+i) + (16-(j+1))
+            index = 8 * (16 + i) + (16 - (j + 1))
 
 
 rows = 16
 columns = 16
 btns = [[None for i in range(rows)] for j in range(columns)]
-colors = ["White", "Red", "Green", "Blue", "Black", "Cyan", "Yellow"]
+colors = ["White", "Red", "Green", "Blue", "Magenta", "Cyan", "Yellow"]
 colorButtons = [None for i in range(len(colors))]
 clearButton = None
 eraseButton = None
 menuStrip = None
 file = None
-blankColor = "gray"
+blankColor = "black"
 userColor = blankColor
 erase = False
 boardClear = True
-imagePath = os.getcwd() + "/Pixel Box Images/Images"
-textPath = os.getcwd() + "/Pixel Box Images/Colors"
+path = os.getcwd() + "/Pixel Box Images"
 
 tk = Tk()
 tk.title("Pixel Board")
@@ -179,10 +192,6 @@ createFolders()
 
 tk.config(menu=menuStrip)
 tk.attributes('-fullscreen', True)
-           
+
 tk.protocol("WM_DELETE_WINDOW", on_closing)
 tk.mainloop()
-
-
-
-
