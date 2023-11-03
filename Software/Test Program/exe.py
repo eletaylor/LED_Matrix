@@ -20,9 +20,10 @@ pixel1 = neopixel.NeoPixel(
 
 
 def createGrid():
+    global blankColor
     for i in range(rows):
         for j in range(columns):
-            btns[i][j] = Button(tk, bg="gray")
+            btns[i][j] = Button(tk, bg=blankColor)
             btns[i][j]['command'] = lambda btn=btns[i][j]: color(btn)
             btns[i][j].grid(row=i + 1, column=j)
             Grid.rowconfigure(tk, index=i + 1, weight=1)
@@ -133,20 +134,33 @@ def on_closing():
 
 
 def open_file():
+    global erase
+    global boardClear
+    global userColor
+    global blankColor
     counter = 0
+    erase = False
+    boardClear = False
+    userColor = blankColor
+    
     openFile = filedialog.askopenfile(initialdir=path, title="Open Design")
     colorArray = openFile.readlines()
     colorArray = [x.strip() for x in colorArray]
-    buttonColors = []
     for i in range(rows):
         for j in range(columns):
             btns[i][j]['bg'] = colorArray[counter]
-            buttonColors.append(btns[i][j]['bg'])
             counter += 1
-    messagebox.showinfo("Load Successful", buttonColors)
 
 
 def save_file():
+    global erase
+    global boardClear
+    global userColor
+    global blankColor
+    erase = False
+    boardClear = False
+    userColor = blankColor
+    
     saveFile = filedialog.asksaveasfile(defaultextension=".txt", initialdir=path, title="Save Design")
     for i in range(rows):
         for j in range(columns):
