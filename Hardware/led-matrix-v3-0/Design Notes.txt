@@ -1,0 +1,23 @@
+TPS66121
+
+Want PPHV current protection
+Want VBUS overvoltage protection 
+- how to set the level? Absolute max rating from LED datsheet is 5.3, set to 5.0
+- use voltage divider (p11 for eqn)
+VLDO default powered by VIN, tie VIN and VBUS together anyway, use VLDO? I think we only want PPHV
+- It says ground VIN if unused
+
+See pg 20 for application example
+
+VLDO cap - 2.5uF
+PPHV cap - unspecified, maybe not necessary? system is very capacitive
+VBUS cap - at least 10uF, put close to the USBC connector
+Forgo VBUS TVS protection
+Place Shottky diode (NSR20F30NXTG) from VBUS to GND
+
+VIN  - gnd if unused?
+VLDO - gnd if unused?
+FLT  - NC, unused
+EN0  - set to 1 to put the IC in the sink state
+OVP  - voltage divider 102k/20k
+
