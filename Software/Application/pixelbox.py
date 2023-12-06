@@ -4,6 +4,7 @@ from tkinter import filedialog
 import board
 import neopixel
 import os
+import time
 
 '''Use GPIO pins 10, 12, 18, 21 for each quadrant
    of lights respectively'''
@@ -23,13 +24,10 @@ ORDER = neopixel.GRB
    brightness, and pixel order'''
 pixels1 = neopixel.NeoPixel(
     pixel_pin1, num_pixels, brightness=0.1, pixel_order=ORDER)
-
-pixels2= neopixel.NeoPixel(
+pixels2 = neopixel.NeoPixel(
     pixel_pin2, num_pixels, brightness=0.1, pixel_order=ORDER)
-
 pixels3 = neopixel.NeoPixel(
     pixel_pin3, num_pixels, brightness=0.1, pixel_order=ORDER)
-
 pixels4 = neopixel.NeoPixel(
     pixel_pin4, num_pixels, brightness=0.1, pixel_order=ORDER)
 
@@ -69,6 +67,11 @@ def createClearAndErase():
     eraseButton = Button(tk, text="Erase", fg="white", bg="gray")
     eraseButton.grid(row=16, column=35)
     eraseButton['command'] = lambda btn=eraseButton: eraser(btn)
+    
+    global funButton
+    funButton = Button(tk, text="Party Mode", fg="white", bg="blue")
+    funButton.grid(row=8, column=40)
+    funButton['command'] = lambda btn=funButton: fun(btn)
 
 
 '''Create the menu tab at the top of the screen with the
@@ -171,6 +174,48 @@ def changeColor(btn):
         messagebox.showinfo("Color Changed", "The active color is " + userColor)
 
 
+'''This method handles the "Party Mode" feature.
+   It runs through a pre-set cycle 3 times.'''
+def fun(btn):
+    for i in range(3):
+        fillColor((255, 0, 0))
+        fillColor((0, 255, 0))
+        fillColor((0, 0, 255))
+        fillColor((255, 0, 255))
+        fillColor((0, 100, 100))
+        fillColor((255, 255, 0))
+        
+        pixels1.fill((255, 0, 0))
+        pixels2.fill((0, 255, 0))
+        pixels3.fill((0, 255, 0))
+        pixels4.fill((0, 0, 255))
+        time.sleep(1)
+        
+        for i in range(64):
+            pixels1[i] = (255, 255, 0)
+            pixels4[i] = (255, 255, 0)
+            pixels2[i] = (255, 255, 255)
+            pixels3[i] = (255, 255, 255)
+        
+        pixels1.fill((255, 0, 0))
+        pixels2.fill((0, 0, 255))
+        pixels3.fill((0, 0, 255))
+        pixels4.fill((255, 255, 0))
+        time.sleep(1)
+        
+    fillColor((0, 0, 0))
+        
+
+
+# This method fills all the quadrants with a particular color
+def fillColor(color):
+    pixels1.fill(color)
+    pixels2.fill(color)
+    pixels3.fill(color)
+    pixels4.fill(color)
+    time.sleep(1)
+        
+        
 '''If the user closes the program, reset the board and exit the 
    application'''
 def on_closing():
@@ -248,7 +293,6 @@ def getQuadrant(index, i, j, userColor):
     elif index in range(192, 256):
         quadrant = 1
     NewIndex(i, j, userColor)
-
 
 '''Change the index found earlier to a value between 0 and 63.
    The hours I toiled to get the math right...'''
@@ -378,6 +422,7 @@ colorButtons = [None for i in range(len(colors))]
 '''Initalize the clear and erase buttons, the menu bar, file dialog,
    index variables, quadrant variable, blankColor, userColor, and
    drawing booleans'''
+funButton = None
 clearButton = None
 eraseButton = None
 menuStrip = None
@@ -389,6 +434,7 @@ blankColor = "black"
 userColor = blankColor
 erase = False
 boardClear = True
+funBool = False
 
 # Store the path of the directory for the .txt files
 path = os.getcwd() + "/Pixel Box Images"
